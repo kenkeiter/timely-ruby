@@ -27,20 +27,20 @@ end
 
 benchmark_ops("SET #{NUM_ITERATIONS} records (1 dimension, individually)") do
   NUM_ITERATIONS.times do |i|
-    timely.set(series, i, :value => i, :other_value => i - 1)
+    timely.set(series, i, :value => i)
   end
 end
 
 benchmark_ops("GET #{NUM_ITERATIONS} records (1 dimension, individually)") do
   NUM_ITERATIONS.times do |i|
-    timely.get(series, i, "value", "other_value")
+    timely.get(series, i, "value")
   end
 end
 
-benchmark_time("MEMBERS (1 dimension, fetch all records)") do
-  timely.members(series, "default", "value", "other_value")
+benchmark_time("MEMBERS (1 dimension, native format, fetch all records)") do
+  timely.members(series, "default", "value")
 end
 
-benchmark_time("RANGE (1 dimension, fetch quarter of all records)") do
-  timely.range(series, "default", (NUM_ITERATIONS / 4) * 3, NUM_ITERATIONS, "value", "other_value")
+benchmark_time("RANGE (1 dimension, native format, fetch quarter of all records)") do
+  timely.range(series, "default", (NUM_ITERATIONS / 4) * 3, NUM_ITERATIONS, "value")
 end

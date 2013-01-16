@@ -16,4 +16,5 @@ end
 desc "Run benchmark suite against local Timely database instance."
 task :benchmark do
   sh "ruby -I ./lib ./benchmarking/set_get.rb"
+  sh "ruby -I ./lib ./benchmarking/encoding.rb"
 end
