@@ -158,7 +158,7 @@ module Timely
     end
 
     # Delete a sample within a series by name and time.
-    def delete_series(series_name, time)
+    def delete_member(series_name, time)
       synchronize do |client|
         client.call([:delseries, series_name, time], &_boolify)
       end
