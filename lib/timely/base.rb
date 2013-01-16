@@ -113,7 +113,11 @@ module Timely
           if reply.kind_of?(Array)
             reply.each_slice(dimensions.length).to_a
           else
-            reply
+            if format == 'native'
+              [[reply]]
+            else
+              reply
+            end
           end
         end
       end
@@ -127,7 +131,11 @@ module Timely
           if reply.kind_of?(Array)
             reply.each_slice(dimensions.length).to_a
           else
-            reply
+            if format == 'native'
+              [[reply]]
+            else
+              reply
+            end
           end
         end
       end
@@ -137,7 +145,11 @@ module Timely
     def get(series_id, time, *dimensions)
       synchronize do |client|
         client.call([:get, series_id, time, dimensions].flatten!) do |reply|
-          reply
+          if reply.kind_of?(Array)
+            reply
+          else
+            [reply]
+          end
         end
       end
     end
