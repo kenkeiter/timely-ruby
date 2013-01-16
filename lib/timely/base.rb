@@ -66,20 +66,33 @@ module Timely
       end
     end
 
-    def set(series_id, time, dimensions = {})
+    # Get info about the server.
+    #
+    # @return [Hash]
+    def info
       synchronize do |client|
-        client.call([:set, series_id, time, dimensions.to_a].flatten!, &_boolify)
-      end
-    end
-
-    def get(series_id, time, *dimensions)
-      synchronize do |client|
-        client.call([:get, series_id, time, dimensions].flatten!) do |reply|
-          reply
+        client.call([:info]) do |reply|
+          if reply.kind_of?(Array)
+            Hash[reply]
+          else
+            reply
+          end
         end
       end
     end
 
+    # Check if a series exists.
+    #
+    # @return [Bool]
+    def exists(series_name)
+      synchronize do |client|
+        client.call([:exists, series_name], &_boolify)
+      end
+    end
+
+    # Determine which dimensions are set for a particular series and sample.
+    #
+    # @return [Array]
     def dimensions(series_name, time)
       synchronize do |client|
         client.call([:dimensions, series_name, time]) do |reply|
@@ -92,41 +105,77 @@ module Timely
       end
     end
 
+    # Select dimensions from each record in a series, and return them using the 
+    # codec specified in the format argument.
     def members(series_name, format, *dimensions)
       synchronize do |client|
         client.call([:members, series_name, format, dimensions].flatten!) do |reply|
           if reply.kind_of?(Array)
             reply.each_slice(dimensions.length).to_a
           else
-            reply
+            if format == 'native'
+              [[reply]]
+            else
+              reply
+            end
           end
         end
       end
     end
 
+    # Select dimensions from each record within a given time range, and return 
+    # them using the codec specified in the format argument.
     def range(series_name, format, from, to, *dimensions)
       synchronize do |client|
-        client.call([:members, series_name, format, from, to, dimensions].flatten!) do |reply|
+        client.call([:range, series_name, format, from, to, dimensions].flatten!) do |reply|
           if reply.kind_of?(Array)
             reply.each_slice(dimensions.length).to_a
           else
-            reply
+            if format == 'native'
+              [[reply]]
+            else
+              reply
+            end
           end
         end
       end
     end
 
-    def info
+    # Given a series and time, select the specified dimensions and return them.
+    def get(series_id, time, *dimensions)
       synchronize do |client|
-        client.call([:info]) do |reply|
+        client.call([:get, series_id, time, dimensions].flatten!) do |reply|
           if reply.kind_of?(Array)
-            Hash[reply]
-          else
             reply
+          else
+            [reply]
           end
         end
       end
     end
+
+    # Set the specified dimensions for a series and time. If the time series 
+    # does not exist, create it.
+    def set(series_id, time, dimensions = {})
+      synchronize do |client|
+        client.call([:set, series_id, time, dimensions.to_a].flatten!, &_boolify)
+      end
+    end
+
+    # Delete a series by name.
+    def delete_series(series_name)
+      synchronize do |client|
+        client.call([:delseries, series_name], &_boolify)
+      end
+    end
+
+    # Delete a sample within a series by name and time.
+    def delete_member(series_name, time)
+      synchronize do |client|
+        client.call([:delseries, series_name, time], &_boolify)
+      end
+    end
+    
 
     #######
     private
