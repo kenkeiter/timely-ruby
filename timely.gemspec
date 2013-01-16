@@ -4,8 +4,8 @@ require File.expand_path('../lib/timely/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Kenneth Keiter"]
   gem.email         = ["ken@kenkeiter.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Interface to Timely time series db}
+  gem.summary       = %q{Interface to Timely time series db}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
