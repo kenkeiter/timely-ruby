@@ -18,3 +18,8 @@ task :benchmark do
   sh "ruby -I ./lib ./benchmarking/set_get.rb"
   sh "ruby -I ./lib ./benchmarking/encoding.rb"
 end
+
+desc "Run stress test suite against local Timely database instance."
+task :stress do
+  sh "ruby -I ./lib ./benchmarking/stress.rb"
+end

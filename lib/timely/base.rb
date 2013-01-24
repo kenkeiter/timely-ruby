@@ -15,6 +15,14 @@ end
 
 module Timely
 
+  def self.current
+    @current ||= Connection.new
+  end
+
+  def self.current=(connection)
+    @current = connection
+  end
+
   class Connection
 
     DEFAULTS = {
@@ -24,14 +32,6 @@ module Timely
     DEFAULTS[:driver] = :hiredis if HIREDIS_AVAILABLE
 
     attr :client
-
-    def self.current
-      @current ||= Connection.new
-    end
-
-    def self.current=(connection)
-      @current = connection
-    end
 
     include MonitorMixin
 
