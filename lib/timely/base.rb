@@ -111,13 +111,11 @@ module Timely
       synchronize do |client|
         client.call([:members, series_name, format, dimensions].flatten!) do |reply|
           if reply.kind_of?(Array)
-            reply.each_slice(dimensions.length).to_a
+            reply.each_slice(dimensions.length + 1).to_a
+          elsif reply.nil?
+            []
           else
-            if format == 'native'
-              [[reply]]
-            else
-              reply
-            end
+            reply
           end
         end
       end
@@ -129,13 +127,11 @@ module Timely
       synchronize do |client|
         client.call([:range, series_name, format, from, to, dimensions].flatten!) do |reply|
           if reply.kind_of?(Array)
-            reply.each_slice(dimensions.length).to_a
+            reply.each_slice(dimensions.length + 1).to_a
+          elsif reply.nil?
+            []
           else
-            if format == 'native'
-              [[reply]]
-            else
-              reply
-            end
+            reply
           end
         end
       end
@@ -172,7 +168,7 @@ module Timely
     # Delete a sample within a series by name and time.
     def delete_member(series_name, time)
       synchronize do |client|
-        client.call([:delseries, series_name, time], &_boolify)
+        client.call([:delmember, series_name, time], &_boolify)
       end
     end
     
