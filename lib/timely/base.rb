@@ -111,7 +111,11 @@ module Timely
       synchronize do |client|
         client.call([:members, series_name, format, dimensions].flatten!) do |reply|
           if reply.kind_of?(Array)
-            reply.each_slice(dimensions.length + 1).to_a
+            if reply.length == (dimensions.length + 1)
+              [reply]
+            else
+              reply.each_slice(dimensions.length + 1).to_a
+            end
           elsif reply.nil?
             []
           else
@@ -127,7 +131,11 @@ module Timely
       synchronize do |client|
         client.call([:range, series_name, format, from, to, dimensions].flatten!) do |reply|
           if reply.kind_of?(Array)
-            reply.each_slice(dimensions.length + 1).to_a
+             if reply.length == (dimensions.length + 1)
+              [reply]
+            else
+              reply.each_slice(dimensions.length + 1).to_a
+            end
           elsif reply.nil?
             []
           else
